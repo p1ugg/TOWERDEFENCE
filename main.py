@@ -88,7 +88,7 @@ def draw_text(text, font, color, surface, x, y):
 
 def main_menu():
     click = False
-
+    pygame.mouse.set_visible(False)
     while True:
         screen = pygame.display.set_mode((1280, 720), 0, 32)
         screen.fill((0, 0, 0))
