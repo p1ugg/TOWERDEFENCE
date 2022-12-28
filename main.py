@@ -1,43 +1,29 @@
 import os
 import random
-
 import pygame
 import sys
 from pygame.locals import *
+from constants import *
 
-mainClock = pygame.time.Clock()
-
-RED = (255, 0, 0)
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-BLACK = (0, 0, 0)
-GRAY = (192, 192, 192)
-AQUA = (127, 255, 212)
-PURPLE = (75, 0, 130)
-YELLOW = (255, 255, 0)
 pygame.init()
-pygame.display.set_caption('game base')
-width = 1280
-height = 720
-screen = pygame.display.set_mode((1280, 720), 0, 32)
-
-font = pygame.font.SysFont('arial', 20)
-
+mainClock = pygame.time.Clock()
+pygame.display.set_caption('TOWER DEFENSE')
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 screen_rect = (0, 0, width, height)
 all_sprites = pygame.sprite.Group()
+font = pygame.font.SysFont('arial', 20)
 
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
-    # если файл не существует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
     image = pygame.image.load(fullname)
     return image
 
-class Particle(pygame.sprite.Sprite):
+
+class Particle(pygame.sprite.Sprite):  # класс для создания звездочек в меню игры
     fire = [load_image("star.png")]
     for scale in (5, 10, 20):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
@@ -51,7 +37,6 @@ class Particle(pygame.sprite.Sprite):
         self.velocity = [dx, dy]
         # и свои координаты
         self.rect.x, self.rect.y = pos
-
         # гравитация будет одинаковой (значение константы)
         self.gravity = GRAVITY
 
@@ -66,6 +51,7 @@ class Particle(pygame.sprite.Sprite):
         if not self.rect.colliderect(screen_rect):
             self.kill()
 
+
 def create_particles(position):
     # количество создаваемых частиц
     particle_count = 2
@@ -75,11 +61,13 @@ def create_particles(position):
         Particle(position, random.choice(numbers), random.choice(numbers))
 
 
-
 def drawCursor(x, y):
+    # выводим звездочки на экран
     create_particles((x, y))
 
+
 def draw_text(text, font, color, surface, x, y):
+    #отрисовка текста
     textobj = font.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
@@ -87,17 +75,18 @@ def draw_text(text, font, color, surface, x, y):
 
 
 def main_menu():
+    # МЕНЮ ИГРЫ
     click = False
     pygame.mouse.set_visible(False)
     while True:
-        screen = pygame.display.set_mode((1280, 720), 0, 32)
-        screen.fill((0, 0, 0))
-
+        screen1 = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        screen1.fill((0, 0, 0))
         mx, my = pygame.mouse.get_pos()
+        # получаем позицию мыши для того, чтобы проверять на какую кнопку нажали
 
-        f1 = font.render('TOWER DEFENSE', True, WHITE)
-        f2 = font.render('INFO', True, WHITE)
-        f3 = font.render('EXIT', True, WHITE)
+        text_button1 = font.render('TOWER DEFENSE', True, WHITE)
+        text_button2 = font.render('INFO', True, WHITE)
+        text_button3 = font.render('EXIT', True, WHITE)
         button_1 = pygame.Rect(50, 100, 200, 50)
         button_2 = pygame.Rect(50, 200, 200, 50)
         button_3 = pygame.Rect(50, 300, 200, 50)
@@ -111,13 +100,15 @@ def main_menu():
             if click:
                 pygame.quit()
                 sys.exit()
+        # проверка нажатия на кнопку
 
         pygame.draw.rect(screen, PURPLE, button_1)
         pygame.draw.rect(screen, PURPLE, button_2)
         pygame.draw.rect(screen, PURPLE, button_3)
-        screen.blit(f1, (50, 100))
-        screen.blit(f2, (50, 200))
-        screen.blit(f3, (50, 300))
+        screen.blit(text_button1, (50, 100))
+        screen.blit(text_button2, (50, 200))
+        screen.blit(text_button3, (50, 300))
+        # отрисовка кнопочек
         click = False
 
         for event in pygame.event.get():
@@ -133,20 +124,20 @@ def main_menu():
                     click = True
 
         pos = pygame.mouse.get_pos()
+        # берем позицию мыши, чтобы отрисовывать звездочки
         drawCursor(pos[0], pos[1])
         all_sprites.draw(screen)
 
         pygame.display.update()
         all_sprites.update()
         pygame.display.flip()
-        screen.fill((0, 0, 0))
+        screen1.fill((0, 0, 0))
 
-
-
-        mainClock.tick(30)
+        mainClock.tick(FPS)
 
 
 def game():
+    #ИГРА
     running = True
     while running:
         screen.fill((0, 0, 0))
@@ -161,10 +152,11 @@ def game():
                     running = False
 
         pygame.display.update()
-        mainClock.tick(60)
+        mainClock.tick(FPS)
 
 
 def info():
+    #ИНФА О ПРОГЕ
     running = True
     while running:
         screen.fill((0, 0, 0))
@@ -179,7 +171,7 @@ def info():
                     running = False
 
         pygame.display.update()
-        mainClock.tick(60)
+        mainClock.tick(FPS)
 
 
 main_menu()
