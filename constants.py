@@ -1,4 +1,4 @@
-FPS = 30
+FPS = 60
 width = 1920
 height = 1080
 
