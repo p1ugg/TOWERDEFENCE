@@ -25,10 +25,10 @@ def load_image(name, colorkey=None):
 
 class Particle(pygame.sprite.Sprite):  # класс для создания звездочек в меню игры
     fire = [load_image("star.png")]
-    for scale in (5, 10, 20):
+    for scale in (0.4, 0.6, 0.8, 1, 1.2):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
 
-    def __init__(self, pos, dx, dy, GRAVITY=0):
+    def __init__(self, pos, dx, dy, GRAVITY=0.01):
         super().__init__(all_sprites)
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
@@ -67,7 +67,7 @@ def drawCursor(x, y):
 
 
 def draw_text(text, font, color, surface, x, y):
-    #отрисовка текста
+    # отрисовка текста
     textobj = font.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
@@ -137,7 +137,7 @@ def main_menu():
 
 
 def game():
-    #ИГРА
+    # ИГРА
     running = True
     while running:
         screen.fill((0, 0, 0))
@@ -156,12 +156,26 @@ def game():
 
 
 def info():
-    #ИНФА О ПРОГЕ
+    # ИНФА О ПРОГЕ
     running = True
     while running:
         screen.fill((0, 0, 0))
-
         draw_text('INFO', font, (255, 255, 255), screen, 20, 20)
+        draw_text('Игра в жанре Tower Defense с элементами РПГ', font, WHITE, screen, 20, 80)
+        draw_text('Главные механики игры:', font, WHITE, screen, 20, 100)
+        draw_text('Возведение и улучшение различных башен.', font, WHITE, screen, 20, 140)
+        draw_text('Сбор ресурсов для разного рода улучшений.', font, WHITE, screen, 20, 160)
+        draw_text('Несколько персонажей с уникальной:', font, WHITE, screen, 20, 180)
+        draw_text('Спец-ультимативной способностью', font, WHITE, screen, 40, 200)
+        draw_text('Пассивной способностью', font, WHITE, screen, 40, 220)
+        draw_text('Атакой', font, WHITE, screen, 40, 240)
+        draw_text('Сундуки с полезными предметами.', font, WHITE, screen, 20, 280)
+        draw_text('Расходники:', font, WHITE, screen, 20, 300)
+        draw_text('ПИВО - восстановление здоровья', font, WHITE, screen, 40, 320)
+        draw_text('КУМЫС - ускорение передвижения', font, WHITE, screen, 40, 340)
+        draw_text('ТАРХУН - щит, блокирующий несколько попаданий по персонажу', font, WHITE, screen, 40, 360)
+        draw_text('КЕФИР - неуязвимость на несколько секунд', font, WHITE, screen, 40, 380)
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
