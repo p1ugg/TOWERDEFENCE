@@ -5,14 +5,6 @@ import sys
 from pygame.locals import *
 from constants import *
 
-pygame.init()
-mainClock = pygame.time.Clock()
-pygame.display.set_caption('TOWER DEFENSE')
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-screen_rect = (0, 0, width, height)
-all_sprites = pygame.sprite.Group()
-font = pygame.font.SysFont('arial', 20)
-
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -20,15 +12,36 @@ def load_image(name, colorkey=None):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
     image = pygame.image.load(fullname)
+    if colorkey is not None:
+        image = image.convert()
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    else:
+        image = image.convert_alpha()
     return image
 
 
+pygame.init()
+mainClock = pygame.time.Clock()
+pygame.display.set_caption('TOWER DEFENSE')
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+screen_rect = (0, 0, width, height)
+all_sprites = pygame.sprite.Group()
+font = pygame.font.SysFont('arial', 20)
+image = load_image("cursor.png")
+cursor = pygame.sprite.Sprite()
+cursor.image = image
+cursor.rect = cursor.image.get_rect()
+all_sprites.add(cursor)
+
+
 class Particle(pygame.sprite.Sprite):  # класс для создания звездочек в меню игры
-    fire = [load_image("star.png")]
-    for scale in (0.4, 0.6, 0.8, 1, 1.2):
+    fire = [load_image("particle.png")]
+    for scale in (5, 6, 7, 8, 9, 10):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
 
-    def __init__(self, pos, dx, dy, GRAVITY=0.01):
+    def __init__(self, pos, dx, dy, GRAVITY=0):
         super().__init__(all_sprites)
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
@@ -54,15 +67,15 @@ class Particle(pygame.sprite.Sprite):  # класс для создания зв
 
 def create_particles(position):
     # количество создаваемых частиц
-    particle_count = 2
+    particle_count = 5
     # возможные скорости
-    numbers = range(-5, 6)
+    numbers = (-2, -1, 1, 2)
     for _ in range(particle_count):
         Particle(position, random.choice(numbers), random.choice(numbers))
 
 
 def drawCursor(x, y):
-    # выводим звездочки на экран
+    # выводим партиклы на экран
     create_particles((x, y))
 
 
@@ -79,6 +92,7 @@ def main_menu():
     click = False
     pygame.mouse.set_visible(False)
     while True:
+
         screen1 = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         screen1.fill((0, 0, 0))
         mx, my = pygame.mouse.get_pos()
@@ -102,6 +116,31 @@ def main_menu():
                 sys.exit()
         # проверка нажатия на кнопку
 
+        click = False
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEMOTION:
+                screen.fill((0, 0, 0))
+                cursor.rect.x = event.pos[0]
+                cursor.rect.y = event.pos[1]
+                if pygame.mouse.get_focused() is False:
+                    screen.fill((0, 0, 0))
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                # берем позицию мыши, чтобы отрисовывать звездочки
+                for _ in range(random.randrange(6, 10, 1)):
+                    drawCursor(pos[0], pos[1])
+                all_sprites.draw(screen)
+                if event.button == 1:
+                    click = True
+
         pygame.draw.rect(screen, PURPLE, button_1)
         pygame.draw.rect(screen, PURPLE, button_2)
         pygame.draw.rect(screen, PURPLE, button_3)
@@ -109,23 +148,8 @@ def main_menu():
         screen.blit(text_button2, (50, 200))
         screen.blit(text_button3, (50, 300))
         # отрисовка кнопочек
-        click = False
 
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-            if event.type == MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
 
-        pos = pygame.mouse.get_pos()
-        # берем позицию мыши, чтобы отрисовывать звездочки
-        drawCursor(pos[0], pos[1])
         all_sprites.draw(screen)
 
         pygame.display.update()
