@@ -56,7 +56,8 @@ class Player:
 player = Player(WIDTH / 2, HEIGHT / 2)
 
 # Main Loop
-while True:
+running = True
+while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -71,6 +72,9 @@ while True:
                 player.up_pressed = True
             if event.key == pygame.K_s:
                 player.down_pressed = True
+            if event.key == pygame.K_ESCAPE:
+                running = False
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 player.left_pressed = False
