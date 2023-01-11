@@ -1,6 +1,6 @@
 FPS = 60
-width = 1920
-height = 1080
+WIDTH = 1920
+HEIGHT = 1080
 
 
 RED = (255, 0, 0)
