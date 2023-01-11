@@ -106,7 +106,7 @@ def main_menu():
         button_3 = pygame.Rect(50, 300, 200, 50)
         if button_1.collidepoint((mx, my)):
             if click:
-                game()
+                import movement
         if button_2.collidepoint((mx, my)):
             if click:
                 info()
