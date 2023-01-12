@@ -4,6 +4,7 @@ import pygame
 import sys
 from pygame.locals import *
 from constants import *
+from level import Level
 
 
 def load_image(name, colorkey=None):
@@ -34,11 +35,12 @@ cursor = pygame.sprite.Sprite()
 cursor.image = image
 cursor.rect = cursor.image.get_rect()
 all_sprites.add(cursor)
+level = Level()
 
 
 class Particle(pygame.sprite.Sprite):  # класс для создания звездочек в меню игры
     fire = [load_image("particle.png")]
-    for scale in (5, 6, 7, 8, 9, 10):
+    for scale in (0.25, 0.5, 0.1, 2.2, 4, 6, 8, 9):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
 
     def __init__(self, pos, dx, dy, GRAVITY=0):
@@ -58,8 +60,10 @@ class Particle(pygame.sprite.Sprite):  # класс для создания зв
         # движение с ускорением под действием гравитации
         self.velocity[1] += self.gravity
         # перемещаем частицу
-        self.rect.x += random.choice([(self.velocity[0] - random.randint(1, 3)), (self.velocity[0] + random.randint(1, 3))])
-        self.rect.y += random.choice([(self.velocity[1] - random.randint(1, 3)), (self.velocity[1] + random.randint(1, 3))])
+        self.rect.x += random.choice(
+            [(self.velocity[0] - random.randint(1, 3)), (self.velocity[0] + random.randint(1, 3))])
+        self.rect.y += random.choice(
+            [(self.velocity[1] - random.randint(1, 3)), (self.velocity[1] + random.randint(1, 3))])
         # убиваем, если частица ушла за экран
         if not self.rect.colliderect(screen_rect):
             self.kill()
@@ -106,7 +110,7 @@ def main_menu():
         button_3 = pygame.Rect(50, 300, 200, 50)
         if button_1.collidepoint((mx, my)):
             if click:
-                import movement
+                game()
         if button_2.collidepoint((mx, my)):
             if click:
                 info()
@@ -135,7 +139,7 @@ def main_menu():
             if event.type == MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 # берем позицию мыши, чтобы отрисовывать звездочки
-                for _ in range(random.randrange(6, 10, 1)):
+                for _ in range(random.randrange(1, 10)):
                     drawCursor(pos[0], pos[1])
                 all_sprites.draw(screen)
                 if event.button == 1:
@@ -148,7 +152,6 @@ def main_menu():
         screen.blit(text_button2, (50, 200))
         screen.blit(text_button3, (50, 300))
         # отрисовка кнопочек
-
 
         all_sprites.draw(screen)
 
@@ -174,7 +177,7 @@ def game():
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     running = False
-
+        level.run()
         pygame.display.update()
         mainClock.tick(FPS)
 
