@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = pygame.image.load('data/saulgoodman.jpg').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0, -10)
+        self.hitbox = self.rect.inflate(0, 0)
 
         self.direction = pygame.math.Vector2()
         self.speed = 5
