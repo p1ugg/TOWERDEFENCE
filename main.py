@@ -5,9 +5,9 @@ import sys
 from pygame.locals import *
 from constants import *
 from level import Level
-
-
-
+from editmode import Level2
+from cursor import Cursor
+from player import Player
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -43,6 +43,7 @@ cursor.image = image
 cursor.rect = cursor.image.get_rect()
 all_sprites.add(cursor)
 level = Level()
+level2 = Level2()
 
 
 class Particle(pygame.sprite.Sprite):  # класс для создания звездочек в меню игры
@@ -67,10 +68,8 @@ class Particle(pygame.sprite.Sprite):  # класс для создания зв
         # движение с ускорением под действием гравитации
         self.velocity[1] += self.gravity
         # перемещаем частицу
-        self.rect.x += random.choice(
-            [(self.velocity[0] - random.randint(1, 3)), (self.velocity[0] + random.randint(1, 3))])
-        self.rect.y += random.choice(
-            [(self.velocity[1] - random.randint(1, 3)), (self.velocity[1] + random.randint(1, 3))])
+        self.rect.x += random.choice([(self.velocity[0] - random.randint(1, 3)), (self.velocity[0] + random.randint(1, 3))])
+        self.rect.y += random.choice([(self.velocity[1] - random.randint(1, 3)), (self.velocity[1] + random.randint(1, 3))])
         # убиваем, если частица ушла за экран
         if not self.rect.colliderect(screen_rect):
             self.kill()
@@ -107,8 +106,7 @@ def main_menu():
     # sound_up_icon = pygame.transform.scale(load_image('sound+.png'), (50, 50))
     # sound_down_icon = pygame.transform.scale(load_image('sound-.png'), (50, 50))
     sound_up_icon = load_image('sound+.png')
-    sound_down_icon =load_image('sound-.png')
-
+    sound_down_icon = load_image('sound-.png')
     while True:
 
         screen1 = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -131,7 +129,6 @@ def main_menu():
         if button_2.collidepoint((mx, my)):
             if click:
                 info()
-
         if button_3.collidepoint((mx, my)):
             if click:
                 pygame.quit()
@@ -143,7 +140,7 @@ def main_menu():
                     pygame.mixer.music.set_volume(vol)
                 else:
                     pygame.mixer.music.set_volume(0)
-        # проверка нажатия на кнопку
+            # проверка нажатия на кнопку
         if sound_up.collidepoint((mx, my)):
             if click:
                 vol += 0.1
@@ -152,6 +149,9 @@ def main_menu():
             if click:
                 vol -= 0.1
                 pygame.mixer.music.set_volume(vol)
+        click = False
+        # проверка нажатия на кнопку
+
         click = False
 
         for event in pygame.event.get():
@@ -209,15 +209,50 @@ def game():
 
         draw_text('TOWER DEFENSE', font, (255, 255, 255), screen, 20, 20)
         for event in pygame.event.get():
+
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    running = False
+                    main_menu()
+                elif event.key == K_c:
+                   game2()
+
         level.run()
         pygame.display.update()
         mainClock.tick(FPS)
+
+def game2():
+    # ИГРА
+    display_surface = pygame.display.get_surface()
+    running2 = True
+    while running2:
+        screen.fill((0, 0, 0))
+
+        # mouse_x, mouse_y = pygame.mouse.get_pos()
+        # cursor = Cursor(mouse_x, mouse_y)
+
+        draw_text('TOWER DEFENSE', font, (255, 255, 255), screen, 20, 20)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    main_menu()
+                elif event.key == K_c:
+                    game()
+
+        # cursor.main(display_surface)
+        level2.run()
+
+        pygame.display.update()
+
+        mainClock.tick(FPS)
+
 
 
 def info():
@@ -254,4 +289,3 @@ def info():
 
 
 main_menu()
-
