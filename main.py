@@ -7,6 +7,8 @@ from constants import *
 from level import Level
 
 
+
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
@@ -24,6 +26,11 @@ def load_image(name, colorkey=None):
 
 
 pygame.init()
+
+pygame.mixer.music.load('sounds/manabreak.mp3')
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play(-1)
+
 mainClock = pygame.time.Clock()
 pygame.display.set_caption('TOWER DEFENSE')
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -95,6 +102,13 @@ def main_menu():
     # МЕНЮ ИГРЫ
     click = False
     pygame.mouse.set_visible(False)
+    vol = 0.1
+    sound_off_icon = pygame.transform.scale(load_image('iconmute.png'), (24, 24))
+    # sound_up_icon = pygame.transform.scale(load_image('sound+.png'), (50, 50))
+    # sound_down_icon = pygame.transform.scale(load_image('sound-.png'), (50, 50))
+    sound_up_icon = load_image('sound+.png')
+    sound_down_icon =load_image('sound-.png')
+
     while True:
 
         screen1 = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -108,18 +122,36 @@ def main_menu():
         button_1 = pygame.Rect(50, 100, 200, 50)
         button_2 = pygame.Rect(50, 200, 200, 50)
         button_3 = pygame.Rect(50, 300, 200, 50)
+        sound_off = pygame.Rect(10, 10, 24, 24)
+        sound_up = pygame.Rect(34, 10, 24, 24)
+        sound_down = pygame.Rect(58, 10, 24, 24)
         if button_1.collidepoint((mx, my)):
             if click:
                 game()
         if button_2.collidepoint((mx, my)):
             if click:
                 info()
+
         if button_3.collidepoint((mx, my)):
             if click:
                 pygame.quit()
                 sys.exit()
-        # проверка нажатия на кнопку
 
+        if sound_off.collidepoint((mx, my)):
+            if click:
+                if pygame.mixer.music.get_volume() == 0:
+                    pygame.mixer.music.set_volume(vol)
+                else:
+                    pygame.mixer.music.set_volume(0)
+        # проверка нажатия на кнопку
+        if sound_up.collidepoint((mx, my)):
+            if click:
+                vol += 0.1
+                pygame.mixer.music.set_volume(vol)
+        if sound_down.collidepoint((mx, my)):
+            if click:
+                vol -= 0.1
+                pygame.mixer.music.set_volume(vol)
         click = False
 
         for event in pygame.event.get():
@@ -148,9 +180,15 @@ def main_menu():
         pygame.draw.rect(screen, PURPLE, button_1)
         pygame.draw.rect(screen, PURPLE, button_2)
         pygame.draw.rect(screen, PURPLE, button_3)
+        pygame.draw.rect(screen, PURPLE, sound_off)
+        pygame.draw.rect(screen, PURPLE, sound_up)
+        pygame.draw.rect(screen, PURPLE, sound_down)
         screen.blit(text_button1, (50, 100))
         screen.blit(text_button2, (50, 200))
         screen.blit(text_button3, (50, 300))
+        screen.blit(sound_off_icon, (10, 10))
+        screen.blit(sound_up_icon, (34, 10))
+        screen.blit(sound_down_icon, (58, 10))
         # отрисовка кнопочек
 
         all_sprites.draw(screen)
@@ -216,3 +254,4 @@ def info():
 
 
 main_menu()
+
