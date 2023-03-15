@@ -1,9 +1,10 @@
 import pygame
 from data.settings import *
+pygame.init()
 
+print(pygame.font.get_fonts())
+# font = pygame.font.Font(None, 24)
 font = pygame.font.Font('data/hardpixel.otf', 36)
-
-
 class Base:
     def __init__(self, x, y, enemy_list, display_scroll):
         self.display_scroll = display_scroll
@@ -25,3 +26,4 @@ class Base:
         if collide_with != -1:
             self.enemies.pop(collide_with)
             self.health -= 1
+
